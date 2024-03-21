@@ -17,19 +17,19 @@ const argv = program.opts();
 function invokeAction({ action, id, name, email, phone }) {
   switch (action) {
     case "list":
-      contacts.listContacts();
+      contacts.listContacts()
       break;
 
     case "get":
-        contacts.getContactById(id);
+      contacts.getContactById(id)
       break;
 
     case "add":
-        contacts.addContact(name, email, phone);
+      contacts.addContact(name,phone, email)
       break;
 
     case "remove":
-      contacts.removeContact(id);
+     contacts.removeContact(id)
       break;
 
     default:

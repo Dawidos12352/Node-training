@@ -1,76 +1,77 @@
 const fs = require("fs").promises
 const path = require("path")
 
-
-
- const contactsPath = path.join(__dirname, "./db/contacts.json")
-
-
+const contactsPath = path.join(__dirname, "./db/contacts.json")
 
 async function listContacts() {
    try{
-        const list = await fs.readFile(contactsPath, "utf-8")
-        console.table(JSON.parse(list))
-        return JSON.parse(list)
-   } catch(err){
-        console.log(err)
+    const list = JSON.parse(await fs.readFile(contactsPath, "utf-8"))
+    console.table(list)
+    return list
+
+   } catch(error) {
+    console.log(error)
    }
   }
   
 async function getContactById(contactId) {
     try{
-        const list = await fs.readFile(contactsPath, "utf-8")
-        const parsedList = JSON.parse(list)
-        const contact = parsedList.find(e => e.id === contactId)
+        const list = JSON.parse( await fs.readFile(contactsPath, "utf-8"))
+        const contact = list.find(e => e.id === contactId)
         console.log(contact)
-   } catch(err){
-        console.log(err)
-   }
+        return contact
+      
+       } catch(error) {
+        console.log(error)
+       }
   }
   
 async function removeContact(contactId) {
     try{
-        const list = await fs.readFile(contactsPath, "utf-8")
-        let parsedList = JSON.parse(list)
-        const contactIndex = parsedList.findIndex(e => e.id === contactId)
+        const list = JSON.parse( await fs.readFile(contactsPath, "utf-8"))
+        const contactIndex = list.findIndex(e => e.id === contactId)
         if(contactIndex === -1){
-            console.log("Contact not found")
-            return
+            console.log("Contact doesn`t exist")
+            return 
         }
-        const contactName = parsedList[contactIndex].name
-        parsedList = parsedList.filter(e => e.id !== contactId)
+
+        const contactName = list[contactIndex].name
+        const parsedList = list.filter(e => e.id !== contactId)
         await fs.writeFile(contactsPath, JSON.stringify(parsedList), "utf-8")
-        console.log(`Contact ${contactName} with id ${contactId} removed`);
+        console.log(`Deleted contact ${contactName}`)
         return parsedList
         
-    } catch(err){
-        console.log(err)
-    }
+        
+      
+       } catch(error) {
+        console.log(error)
+       }
   }
   
-  async function addContact(name, email, phone) {
-    try {
-      const list = JSON.parse(await fs.readFile(contactsPath, "utf-8"));
-      const newContact = {
-        id: new Date(),
-        name,
-        email,
-        phone,
-      };
-      list.push(newContact);
-      await fs.writeFile(contactsPath, JSON.stringify(list), "utf-8");
-  
-      console.log("New contact added",newContact.name);
-      return list;
-  
-    } catch(error) {
-      console.log(error)
-    }
-  };
+async function addContact(name, email, phone) {
+    try{
+        const list = JSON.parse( await fs.readFile(contactsPath, "utf-8"))
+        const newContact = {
+            id: new Date(),
+            name,
+            phone,
+            email,
+        }
+        list.push(newContact)
+        const addedContact = list[list.length - 1]
+        await fs.writeFile(contactsPath, JSON.stringify(list), "utf-8")
+        
+        console.log(`Added contact : ${JSON.stringify(addedContact)}`)
+        return list
+        
+       } catch(error) {
+        console.log(error)
+       }
+  }
 
-  module.exports = {
+module.exports = {
     listContacts,
     getContactById,
     removeContact,
-    addContact
+    addContact,
   }
